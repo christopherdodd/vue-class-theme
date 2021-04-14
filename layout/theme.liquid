@@ -1,0 +1,33 @@
+<!doctype html>
+<head>
+  <title>{{ page_title }}</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="description" content="{{ page_description | escape }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+  {{ content_for_header }} <!-- Header hook for plugins -->
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  <script src="{{ 'shopify-money.js' | asset_url }}"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  {{ 'theme.js' | asset_url | script_tag }}
+  
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-inner container">
+      <img src="{{ 'site-logo.png' | asset_url }}">
+      <a class="header-link" href="/products/t-shirt">Shop the Tee</a>
+      <a class="header-link" href="/collections/shoes">Shop Shoes</a>
+      <a class="header-link cart" href="/cart">Cart</a>
+    </div>
+  </div>
+
+  <main role="main">
+    {{ content_for_layout }}
+  </main>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<div class="collection-page container">
+  {% paginate collection.products by 9 %}
+    <h1 class="collection-page-heading">{{ collection.title }}</h1>
+    <div class="collection-grid">
+      {% for product in collection.products %}
+      <div class="collection-product">
+        {% unless product.available %}<br><strong>sold out</strong>{% endunless %}
+        <a class="collection-product-image" href="{{ product.url | within: collection }}">
+          <img src="{{ product.featured_image.src | img_url: 'large' }}" alt="{{ product.featured_image.alt | escape }}">
+        </a>
+        <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
+        <div>{{ product.price | money }}</div>
+      </div>
+    {% else %}
+      <p>no matches</p>
+    {% endfor %}
+    </div>
+    {% if paginate.pages > 1 %}
+      <div class="pagination-links">
+        {{ paginate | default_pagination }}
+      </div>
+    {% endif %}
+  {% endpaginate %}
+</div>

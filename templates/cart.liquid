@@ -1,0 +1,56 @@
+<div id="cart-page" class="cart-page container">
+  <div class="cart-section">
+    
+    <div class="cart-table">
+      
+        
+          {% if cart.items.size > 0 %}
+            {% for item in cart.items %}
+              <div class="cart-row">
+                <div class="cart-item-title">{{ item.title }}</div>
+                <img src="{{ item.image | img_url: '400x', scale: 2 }} }}">
+                <div>
+                  <div class="cart-item-price">{{ item.final_line_price | money }}</div>
+                  <label>
+                    Qty
+                    <input type="number" class="cart-item-qty" value="{{ item.quantity }}">
+                  </label>
+                </div>
+                <div class="cart-item-remove"><img src="{{ 'icon-trash.svg' | asset_url }}"></div>
+              </div>
+            {% endfor %}
+          {% else %}
+            Your cart is currently empty
+          {% endif %}
+      
+    </div>
+
+    <div class="cart-sidebar">
+      <div class="cart-sidebar-top">
+        <h2>Your total</h2>
+        <div class="cart-total">{{ cart.total_price | money }}</div>
+      </div>
+      <a href="/checkout" class="checkout-btn">
+        Checkout
+      </a>
+    </div>
+  </div>
+
+  {% if collections['shoes'].products.size > 0 %}
+    <div class="cart-upsells">
+      <h2>You might also like...</h2>
+      
+        <div class="cart-upsells-grid">
+          {% for product in collections['shoes'].products limit:4 %}
+            <div class="cart-upsell-item">
+              <div class="cart-upsell-title">{{ product.title }}</div>
+              <img class="cart-upsell-item-image" src="{{ product.featured_image | img_url: '400x', scale: 2 }}">
+              <a class="cart-upsell-atc-btn">Add to cart</a>
+            </div>
+          {% endfor %}
+        </div>
+      </transition>
+    </div>
+  {% endif %}
+  
+</div>

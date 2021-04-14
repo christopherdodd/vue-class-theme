@@ -1,0 +1,36 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+
+<div id="product-page" class="product-page container">
+  <div class="product-photo">
+    <img src="{{ featured_image | img_url: '500x', scale: 2 }}">
+  </div>
+  <div class="product-meta">
+    <h1 class="product-title">{{ product.title }}</h1>
+    <div class="product-price">{{ product.price | money }}</div>
+    <div class="product-description">{{ product.description }}</div>
+    {% if product.variants.size > 1 %}
+      <div class="variant-select">
+        {% for product_option in product.options_with_values %}
+          <label for="{{ product_option.name }}">
+            {{ product_option.name }}
+          </label>
+          <select id="{{ product_option.name }}">
+            {% for value in product_option.values %}
+              <option {% if product_option.selected_value == value %}selected{% endif %}>
+                {{ value }}
+              </option>
+            {% endfor %}
+          </select>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <form action="/cart/add" method="post">
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <input type="hidden" name="quantity" value="1">
+      <button type="submit" class="atc">
+        Add to cart
+      </button>
+    </form>
+  </div>
+</div>
