@@ -12,19 +12,40 @@
   <script src="{{ 'shopify-money.js' | asset_url }}"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/vue@next"></script>
+  <script src="https://unpkg.com/vuex@4.0.0/dist/vuex.global.js"></script>
   {{ 'theme.js' | asset_url | script_tag }}
   
 </head>
 <body>
 
-  <div class="header">
+  {% include 'store.js' %}
+  <div id="header" class="header">
     <div class="header-inner container">
       <img src="{{ 'site-logo.png' | asset_url }}">
       <a class="header-link" href="/products/t-shirt">Shop the Tee</a>
       <a class="header-link" href="/collections/shoes">Shop Shoes</a>
-      <a class="header-link cart" href="/cart">Cart</a>
+      <a class="header-link cart" href="/cart">Cart (<span v-html="cart.item_count"></span>)</a>
     </div>
   </div>
+
+  <script>
+    const HeaderOptions = {
+      name: 'Header',
+      store,
+      created() {
+        store.dispatch('get_cart');
+      },
+      computed: {
+        cart() {
+          return store.state.cart;
+        }
+      }
+    }
+
+    const Header = Vue.createApp(HeaderOptions);
+    Header.mount('#header');
+    Header.use(store);
+  </script>
 
   <main role="main">
     {{ content_for_layout }}

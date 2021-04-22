@@ -27,7 +27,7 @@
         {% endfor %}
       </div>
     {% endif %}
-    <form action="/cart/add" method="post">
+    <form action="/cart/add" method="post" @submit.prevent="handle_atc(current_variant_id)">
       <input type="hidden" name="id" :value="current_variant_id">
       <input type="hidden" name="quantity" value="1">
       <button type="submit" class="atc">
@@ -39,6 +39,7 @@
 
 <script>
   const ProductPage = {
+    name: 'Product',
     data() {
       return {
         current_variant_id: "{{ product.selected_or_first_available_variant.id }}",
@@ -94,6 +95,9 @@
 
         var newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?variant=' + variant.id;
         window.history.replaceState({path: newurl}, '', newurl);
+      },
+      handle_atc(id) {
+        store.dispatch('add_to_cart', id);
       }
     }
   }

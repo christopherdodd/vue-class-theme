@@ -1,3 +1,5 @@
+{% include 'store.js' %}
+
 <div id="cart-page" class="cart-page container">
   <div class="cart-section">
     
@@ -54,12 +56,11 @@
 </div>
 
 <script>
-  const CartPage = {
+  const CartPageOptions = {
+    name: 'Cart',
+    store,
     data() {
       return {
-        cart: {
-          items: []
-        },
         upsells: [
           {% for product in collections['shoes'].products %}
             {
@@ -76,64 +77,43 @@
       }
     },
     created() {
-      this.get_cart();
+      store.dispatch('get_cart').then(() => this.loading = false);
     },
     computed: {
+      cart() {
+        return store.state.cart;
+      },
       filtered_upsells() {
-        const products_in_cart = this.cart.items.map(item => item.product_id.toString());
+        const products_in_cart = store.state.cart.items.map(item => item.product_id.toString());
         return this.upsells.filter(upsell => !products_in_cart.includes(upsell.product_id));
       }
     },
     methods: {
-      get_cart() {
-        $.get('/cart.js')
-        .then(response => JSON.parse(response)) 
-        .then(cart => {
-          this.set_cart(cart);
-        })
-      },
-      set_cart(cart) {
-        this.cart = cart;
-        this.format_prices();
-        this.loading = false;
-      },
       update_cart(id, qty) {
-        $.post('/cart/update.js', `updates[${id}]=${qty}`)
-        .then(response => JSON.parse(response))
-        .then(cart => {
-          this.set_cart(cart);
-        })
-      },
-      format_prices() {
-        this.cart.items.forEach(item => {
-          item.formatted_line_price = Shopify.formatMoney(item.line_price);
-        });
-        this.cart.formatted_total_price = Shopify.formatMoney(this.cart.total_price);
+        store.dispatch('update_cart', {id, qty});
       },
       add_to_cart(id) {
         const upsell = this.upsells.find(upsell => upsell.variant_id == id);
         this.loading = true;
         upsell.adding_upsell = true;
-        $.post('/cart/add.js', {
-          items: [
-            {
-              id,
-              quantity: 1
-            }
-          ]
-        })
-        .then(response => JSON.parse(response))
-        .then(items => {
-          this.get_cart();
+
+        store.dispatch('add_to_cart', id)
+        .then(() => {
+          this.loading = false;
           upsell.adding_upsell = false;
-        })
+        }) 
+        
       },
       remove_from_cart(id) {
         this.loading = true;
-        this.update_cart(id, 0);
+        const qty = 0;
+        store.dispatch('update_cart', {id, qty})
+        .then(() => this.loading = false);
       }
     }
   }
 
-  Vue.createApp(CartPage).mount('#cart-page');
+  const CartPage = Vue.createApp(CartPageOptions)
+  CartPage.mount('#cart-page');
+  CartPage.use(store);
 </script>

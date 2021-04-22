@@ -1,0 +1,57 @@
+<script>
+
+const store = Vuex.createStore({
+    state() {
+        return {
+            cart: {
+                items: []
+            }
+        }
+    },
+    mutations: {
+        SET_CART(state, cart) {
+            cart.items.forEach(item => {
+                item.formatted_line_price = Shopify.formatMoney(item.line_price);
+            });
+            cart.formatted_total_price = Shopify.formatMoney(cart.total_price);
+            state.cart = cart;
+        }
+    },
+    getters: {
+        cart: state => {
+            return state.cart;
+        }
+    },
+    actions: {
+        get_cart({ commit }) {
+            return $.get('/cart.js')
+            .then(response => JSON.parse(response)) 
+            .then(cart => {
+                store.commit('SET_CART', cart);
+            })
+        },
+        update_cart({ commit }, {id, qty}) {
+            return $.post('/cart/update.js', `updates[${id}]=${qty}`)
+            .then(response => JSON.parse(response))
+            .then(cart => {
+                store.commit('SET_CART', cart);
+            })
+        },
+        add_to_cart({ commit, dispatch }, id) {
+            return $.post('/cart/add.js', {
+                    items: [
+                        {
+                            id,
+                            quantity: 1
+                        }
+                    ]
+                })
+                .then(response => JSON.parse(response))
+                .then(items => {
+                    dispatch('get_cart');
+                })
+        }
+    }
+});
+
+</script>
