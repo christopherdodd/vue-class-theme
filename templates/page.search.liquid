@@ -1,0 +1,62 @@
+<div id="search" class="container">
+    <div class="search-box">
+        <input type="text" placeholder="Search Term" v-model="searchTerm" @change="search(searchTerm);">
+        <label v-html="message"></label>
+    </div>
+    <div v-if="lastSearch != ''">
+        <h1>Search Results</h1>
+        <div v-if="loading">Loading...</div>
+        <div class="search-results" v-else-if="items.length > 0">
+            <div class="search-result-item" v-for="item in items">
+                <a :href="item.url">
+                    <img class="search-item-image" :src="item.image">
+                    <div class="search-item-title" v-html="item.title"></div>
+                </a>
+            </div>
+        </div>
+        <div v-else>
+            <div>Your search returned no matches.</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SearchPageOptions = {
+        name: 'Search Page',
+        data() {
+            return {
+                searchTerm: '',
+                lastSearch: '',
+                items: [],
+                loading: false,
+                message: 'Please enter a search term'
+            }
+        },
+        methods: {
+            search(term) {
+                if(term != '') {
+                    this.lastSearch = term;
+                    this.loading = true;
+                    fetch(`/search/suggest.json?q=${term}l&resources[type]=product&resources[limit]=4&resources[options][unavailable_products]=last`)
+                    .then(response => response.json())
+                    .then(suggestions => {
+                        const productSuggestions = suggestions.resources.results.products;
+
+                        if (productSuggestions.length > 0) {
+                            this.items = productSuggestions;
+                            this.message = 'Your search term returned no matches'
+                        } else {
+                            this.message = '';
+                        }
+                        this.loading = false;
+                    });
+                } else {
+                    this.message = 'Please enter a search term'
+                }
+                
+            }
+        }
+    }
+
+    const SearchPage = Vue.createApp(SearchPageOptions).mount('#search');
+</script>

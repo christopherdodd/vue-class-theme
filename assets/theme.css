@@ -214,6 +214,31 @@ table tr td {
   opacity: 0;
 }
 
+.search-box {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.search-box input {
+    font-size: 24px;
+    display: block;
+    margin-bottom: 12px;
+}
+.search-box input::placeholder {
+    color: #666;
+}
+.search-results {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 20px;
+}
+.search-result-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 12px;
+}
+
 /*** Mobile ***/
 @media (max-width: 768px) {
     .header-inner {
@@ -245,6 +270,12 @@ table tr td {
         width: auto;
     }
     .cart-upsells-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .search-box input {
+        width: 100%;
+    }
+    .search-results {
         grid-template-columns: repeat(2, 1fr);
     }
 }
